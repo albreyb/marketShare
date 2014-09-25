@@ -28,7 +28,7 @@ module.exports = {
       return count;
     }
 
-    t.get('followers/list', {screen_name: user1}, function(err, data, response){
+    t.get('followers/id', {screen_name: user1}, function(err, data, response){
             var userOneFollowers = {}; // container for incoming follower usernames
             var userOneFollowerCount = 0;
             var count = null;
@@ -42,7 +42,7 @@ module.exports = {
               userOneFollowerCount++;
             }
             // get second users followers
-            t.get('followers/list', {screen_name: user2}, function(err, data, response){
+            t.get('followers/id', {screen_name: user2}, function(err, data, response){
 
               if (err) { // second rate limt error catcher
                 console.log('TAKE A BREAK, RATE LIMIT EXCEEDED');
