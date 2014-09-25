@@ -14,11 +14,59 @@ var t = new twit({
 });
 
 module.exports = {
-  getFollowers: function(user){
-    t.get('followers/list',
-          {screen_name: user},
-          function(err, data, response){
-            console.log(data.users[1]['screen_name']);
+  getFollowers: function(user1, user2){
+      
+    function similarityCount(userOne, userTwo){
+      var count = 0;
+      console.log('in similarity count');
+      for (var screenName in userOne) {
+        if (userTwo.hasOwnProperty(screenName)){
+          count++;
+        }
+      }
+
+      return count;
+    }
+
+    t.get('followers/list', {screen_name: user1}, function(err, data, response){
+            var userOneFollowers = {}; // container for incoming follower usernames
+            var userOneFollowerCount = 0;
+            var count = null;
+
+            if (err) { // catch rate limit error
+              console.log('TAKE A BREAK, RATE LIMIT EXCEEDED');
+            }
+
+            for (var i = 0; i < data.users.length; i++) { // add userNames to container
+              userOneFollowers[data.users[i]['screen_name']] = true;
+              userOneFollowerCount++;
+            }
+            // get second users followers
+            t.get('followers/list', {screen_name: user2}, function(err, data, response){
+
+              if (err) { // second rate limt error catcher
+                console.log('TAKE A BREAK, RATE LIMIT EXCEEDED');
+              }
+
+              var userTwoFollowers = {}; // container for second users followers
+              var userTwoFollowerCount = 0;
+              for (var i = 0; i < data.users.length; i++) { // add userNames to second container
+                userTwoFollowers[data.users[i]['screen_name']] = true;
+                userTwoFollowerCount++;
+              }
+
+              if (userOneFollowerCount > userTwoFollowerCount) {
+
+                count = similarityCount(userTwoFollowers, userOneFollowers);
+                console.log(count);
+
+              } else {
+                count = similarityCount(userOneFollowers, userTwoFollowers);
+                console.log(count);
+              }
+
+
+            });
           }
     );
   }
