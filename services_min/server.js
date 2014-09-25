@@ -1,0 +1,1 @@
+var app=require("express")(),twitHandler=require("./twitHandler.js"),port=process.env.port||3e3,server=app.listen(port,function(){console.log("listening on port 3000")});

@@ -8,4 +8,4 @@ var server = app.listen(port, function(){
   console.log('listening on port 3000');
 });
 // testing read-in files
-console.log(twitHandler.getFollowers('RexxLifeRaj', 'AlbreyPreston'));
+// console.log(twitHandler.getFollowers('RexxLifeRaj', 'AlbreyPreston'));

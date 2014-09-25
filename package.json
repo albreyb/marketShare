@@ -1,0 +1,30 @@
+{
+  "name": "marketShare",
+  "version": "0.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "express": "^4.9.4",
+    "gulp": "^3.8.8",
+    "gulp-uglify": "^1.0.1",
+    "twit": "^1.1.18"
+  },
+  "devDependencies": {
+    "browserify": "^5.12.0",
+    "gulp-concat": "^2.4.1",
+    "vinyl-source-stream": "^1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/albreyb/marketShare.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/albreyb/marketShare/issues"
+  },
+  "homepage": "https://github.com/albreyb/marketShare"
+}
