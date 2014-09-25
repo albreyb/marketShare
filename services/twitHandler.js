@@ -15,7 +15,8 @@ var t = new twit({
 
 module.exports = {
   getFollowers: function(user1, user2){
-      
+
+    // counts how many similar ids there are between users
     function similarityCount(userOne, userTwo){
       var count = 0;
       console.log('in similarity count');
@@ -25,49 +26,65 @@ module.exports = {
         }
       }
 
+
       return count;
     }
 
-    t.get('followers/id', {screen_name: user1}, function(err, data, response){
-            var userOneFollowers = {}; // container for incoming follower usernames
-            var userOneFollowerCount = 0;
-            var count = null;
+    // uses count to calculate follower ratio
+    function ratio(user, count) {
+      return count / user * 100;
+    }
 
-            if (err) { // catch rate limit error
-              console.log('TAKE A BREAK, RATE LIMIT EXCEEDED');
-            }
+    t.get('followers/ids', {screen_name: user1}, function(err, data, response){
+        var userOneFollowers = {}; // container for incoming follower usernames
+        var userTwoFollowers = {};
+        var userOneFollowerCount = 0; // keeps track of number of followers
+        var userTwoFollowerCount = 0;
+        var userOneRatio; // returned follower ratio
+        var userTwoRatio;
+        var count = null; // keeps count of for ratio calculation
 
-            for (var i = 0; i < data.users.length; i++) { // add userNames to container
-              userOneFollowers[data.users[i]['screen_name']] = true;
-              userOneFollowerCount++;
-            }
-            // get second users followers
-            t.get('followers/id', {screen_name: user2}, function(err, data, response){
+        if (err) { // catch rate limit error
+          console.log('TAKE A BREAK, RATE LIMIT EXCEEDED', err);
+        }
 
-              if (err) { // second rate limt error catcher
-                console.log('TAKE A BREAK, RATE LIMIT EXCEEDED');
-              }
+        for (var i = 0; i < data['ids'].length; i++) { // add ids to container
+          userOneFollowers[data['ids'][i]] = true;
+          userOneFollowerCount++;
+        }
+        // get second users followers
+        t.get('followers/ids', {screen_name: user2}, function(err, data, response){
 
-              var userTwoFollowers = {}; // container for second users followers
-              var userTwoFollowerCount = 0;
-              for (var i = 0; i < data.users.length; i++) { // add userNames to second container
-                userTwoFollowers[data.users[i]['screen_name']] = true;
-                userTwoFollowerCount++;
-              }
-
-              if (userOneFollowerCount > userTwoFollowerCount) {
-
-                count = similarityCount(userTwoFollowers, userOneFollowers);
-                console.log(count);
-
-              } else {
-                count = similarityCount(userOneFollowers, userTwoFollowers);
-                console.log(count);
-              }
-
-
-            });
+          if (err) { // second rate limt error catcher
+            console.log('TAKE A BREAK, RATE LIMIT EXCEEDED', err);
           }
+
+
+          for (var i = 0; i < data['ids'].length; i++) { // add ids to second container
+            userTwoFollowers[data['ids'][i]] = true;
+            userTwoFollowerCount++;
+          }
+
+            // check which account has more followers, users with less followers
+            // is base for similarity analysis
+          if (userOneFollowerCount > userTwoFollowerCount) {
+            // get # of similarities between followers
+            count = similarityCount(userTwoFollowers, userOneFollowers);
+            // get both similarity ratios of user1 & user 2
+            userOneRatio = ratio(userOneFollowerCount, count);
+            userTwoRatio = ratio(userTwoFollowerCount, count);
+
+          } else {
+
+            // see above
+            count = similarityCount(userOneFollowers, userTwoFollowers);
+            // see above
+            userOneRatio = ratio(userOneFollowerCount, count);
+            userTwoRatio = ratio(userTwoFollowerCount, count);
+
+          }
+        });
+      }
     );
   }
 };
